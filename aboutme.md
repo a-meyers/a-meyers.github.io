@@ -1,7 +1,8 @@
 ---
 layout: page
 title: About me
-subtitle: "You cannot change what you are, only what you do."
+subtitle: ""You cannot change what you are, only what you do.""
+bigimg: /img/path.jpg
 ---
 
 My name is Inigo Montoya. I have the following qualities:
