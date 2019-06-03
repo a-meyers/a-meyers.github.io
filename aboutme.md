@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: post
 title: About me
 subtitle: ""You cannot change what you are, only what you do.""
 bigimg: /img/path.jpg
