@@ -7,14 +7,15 @@ subtitle: This is a test page for my resume
 ## Professional Experience
 ***
 
-**Aon** \\\ 2010 - present
-
+**Aon** \\\ 2010 - present  
 **Director - Analytics**
 
 * **Catastrophe Risk Analyst**
+
 A technical and data-intensive position, lead project teams of other catastrophe modelers to support clients’ understanding of their exposure to natural catastrophe risk. Analyze client exposure data using natural catastrophe numerical models to produce loss estimates to construct effective reinsurance programs for clients. Leverages programming expertise to generate new and innovative solutions for clients
 
 * **InsurTech Advisory Practice, DSI Lead**
+
 Engage with startups and established drone and satellite imagery firms to evaluate remote sensing imagery and machine learning algorithms for use in the insurance space
 
 **Paragon Strategic Solutions, Inc.** \\\ 2014 - present
