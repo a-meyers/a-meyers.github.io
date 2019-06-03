@@ -23,7 +23,7 @@ description: Analytics Professional
 
 # List of links in the navigation bar
 navbar-links:
-  #About Me: "aboutme"
+  About Me: "aboutme"
   Resume: "resume"
   Resources:
     - Fangraphs: "https://www.fangraphs.com/"

@@ -1,7 +1,7 @@
 ---
 layout: post
-title: About me
-subtitle: ""You cannot change what you are, only what you do.""
+title: About Me
+subtitle: The wild ride
 bigimg: /img/path.jpg
 ---
 
