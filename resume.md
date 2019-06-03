@@ -5,6 +5,7 @@ subtitle: This is a test page for my resume
 ---
 
 ## Professional Experience
+***
 
 **Aon** \\\ 2010 - present
 
@@ -22,8 +23,10 @@ Engage with startups and established drone and satellite imagery firms to evalua
 Aon representative to Paragon Strategic Solutions, Inc. Lead catastrophe risk analyst for the Florida Hurricane Catastrophe Fund (FHCF). Process exposure data through natural catastrophe numerical models with a self-designed custom algorithm to support both the FHCF insurance rate making as well as reinsurance transaction
 
 ## Notable Projects
+***
 
 **Natural Catastrophe Risk Logic Model for Mortgage Markets**
+
 Designed a C# based logic model to transition natural catastrophe numerical model output into credit default loss for use by major U.S. based mortgage carriers. Output and methodology presented at several Aon based mortgage risk conferences
 
 **Discrete Global Grid System for Insurance Market Applications**
@@ -31,15 +34,19 @@ Designed a C# based logic model to transition natural catastrophe numerical mode
 Designed a discrete method of numerically representing the surface of the earth in two dimensions using linear algebra and C++ CUDA based sparse matrix by vector multiplication
 
 ## Education
+***
 
 **University of Minnesota, Twin Cities**
+
 Master of Science, Business Analytics (MSBA) -  Expected 2020
 
 **University of Minnesota, Twin Cities**
+
 Bachelor of Arts, Economics - 2010  
 Minor, German Studies
 
 ## Technical Skills
+***
 
  **Computation Programming Languages**
  * R
