@@ -1,7 +1,7 @@
 ---
 layout: page
-title: About me
-subtitle: This is a test page for my resume
+title: Anthony Meyers
+subtitle: Analytics Professional
 ---
 
 ## Professional Experience
