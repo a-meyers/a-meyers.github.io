@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: page
 title: About Me
 subtitle: The wild ride
 bigimg: /img/path.jpg
