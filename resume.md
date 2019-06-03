@@ -34,11 +34,15 @@ Designed a discrete method of numerically representing the surface of the earth 
 ***
 
 **University of Minnesota, Twin Cities**  
-Master of Science, Business Analytics (MSBA) -  Expected 2020
+Master of Science, Business Analytics (MSBA) -  Expected 2020  
+
+An interdisciplinary STEM graduate professional degree that blends concepts from data science,computer science, statistics, business intelligence, and information theory geared towards commercial applications. Study of methods and techniques in descriptive analytics, predictive analytics, causal inference, and prescriptive analytics.
 
 **University of Minnesota, Twin Cities**  
 Bachelor of Arts, Economics - 2010  
-Minor, German Studies
+Minor, German Studies  
+
+Training in deductive methods of logic and inductive methods of reasoning using statistical methods and a variety of social and economic data.
 
 ## Technical Skills
 ***  
