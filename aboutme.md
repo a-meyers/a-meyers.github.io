@@ -1,7 +1,7 @@
 ---
 layout: page
 title: About Me
-subtitle: The wild ride
+subtitle: “We cannot solve our problems with the same thinking we used when we created them.” – Albert Einstein
 bigimg: /img/aboutme_bgrd.jpg
 ---
 
