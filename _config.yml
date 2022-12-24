@@ -23,6 +23,7 @@ description: Analytics Professional
 
 # List of links in the navigation bar
 navbar-links:
+  Networking : "networking"
   About Me: "aboutme"
   Resume: "resume"
   Resources:
