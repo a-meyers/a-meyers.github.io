@@ -22,6 +22,7 @@ description: Analytics Professional
 # --- Navigation bar options --- #
 
 # List of links in the navigation bar
+#ATM commented some of these out
 navbar-links:
   Networking : "networking"
   #About Me: "aboutme"
@@ -104,7 +105,8 @@ share-links-active:
 
 # How to display the link to the website in the footer
 # Remove this if you don't want a link in the footer
-url-pretty: "a-meyers.github.io"  # eg. "deanattali.com/beautiful-jekyll"
+#ATM commented this out for the time being
+#url-pretty: "a-meyers.github.io"  # eg. "deanattali.com/beautiful-jekyll"
 
 # --- Web Statistics Section --- #
 
