@@ -22,6 +22,7 @@ author: Some Person
 navbar-links:
   Networking : "networking"
   About Me: "aboutme"
+  Posts: "posts"
   #Resume: "resume"
   Resources:
     - Beautiful Jekyll: "https://beautifuljekyll.com"
