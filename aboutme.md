@@ -2,7 +2,7 @@
 layout: page
 title: About Me
 subtitle: “We cannot solve our problems with the same thinking we used when we created them.” – Albert Einstein
-bigimg: /img/aboutme_bgrd.jpg
+bigimg: assets/img/aboutme_bgrd.jpg
 ---
 
 Thanks for stopping by! Enough people finally convinced me to create my own website so here it is!  

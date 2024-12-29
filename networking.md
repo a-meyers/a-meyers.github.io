@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Networking
-image: /img/ATM_2.jpg
+image: assets/img/ATM_2.jpg
 ---
 
 You must have met me, Anthony Meyers! 
