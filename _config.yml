@@ -10,7 +10,7 @@
 ############################
 
 # Name of website
-title: 
+title: Anthony Meyers Personal Website
 
 # Your name to show in the footer
 author: Anthony Meyers
@@ -20,10 +20,10 @@ author: Anthony Meyers
 ###############################################
 
 navbar-links:
-  Home: "index"
+  Home: ""
   Networking : "networking"
   About Me: "aboutme"
-  Posts: "posts"
+  Blog: "posts"
   #Resume: "resume"
   Resources:
     - Beautiful Jekyll: "https://beautifuljekyll.com"
@@ -96,8 +96,8 @@ rss-description: This website is a virtual proof that I'm awesome
 
 # Select which social network share links to show in posts
 share-links-active:
-  twitter: true
-  facebook: true
+  twitter: false
+  facebook: false
   linkedin: true
   vk: false
 
@@ -172,7 +172,7 @@ footer-hover-col: "#0085A1"
 #################################
 
 # Fill in your Google Analytics tag ID (or "Measurement ID") to track your website usage
-#gtag: "G-XXXXXXXXXX"
+gtag: "G-F0PP4YPKR7"
 
 # Fill in your Cloudflare Analytics beacon token to track your website using Cloudflare Analytics
 #cloudflare_analytics: ""
@@ -261,7 +261,7 @@ date_format: "%B %-d, %Y"
 #################################################################################
 
 # Output options (more information on Jekyll's site)
-timezone: "America/Toronto"
+timezone: "America/Chicago"
 markdown: kramdown
 highlighter: rouge
 # permalink: /:year-:month-:day-:title/
