@@ -66,9 +66,6 @@ h2 {
 h3 {
   font-size: 1.5rem;
 }
-h3.post-subtitle {
-  font-size: 20px; /* Adjust the size as needed */
-}
 h4 {
   font-size: 1.125rem;
 }
@@ -720,7 +717,8 @@ nav.top-nav-short-permanent ~ header > .intro-header.big-img {
 }
 .intro-header .page-heading .page-subheading,
 .intro-header .post-heading .post-subheading {
-  font-size: 1.6875rem;
+  /* font-size: 1.6875rem; */
+  font-size: 0.75rem;
   line-height: 1.1;
   display: block;
   font-family: var(--header-font);
