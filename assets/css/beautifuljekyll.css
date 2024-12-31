@@ -717,8 +717,7 @@ nav.top-nav-short-permanent ~ header > .intro-header.big-img {
 }
 .intro-header .page-heading .page-subheading,
 .intro-header .post-heading .post-subheading {
-  /* font-size: 1.6875rem; */
-  font-size: 0.75rem;
+  font-size: 1.6875rem;
   line-height: 1.1;
   display: block;
   font-family: var(--header-font);
