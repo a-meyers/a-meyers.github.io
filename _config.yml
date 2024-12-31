@@ -20,11 +20,11 @@ author: Anthony Meyers
 ###############################################
 
 navbar-links:
-  Home: ""
+  Home: "index"
   Networking : "networking"
   About Me: "aboutme"
   Blog: "posts"
-  #Resume: "resume"
+  Resume: "resume"
   Resources:
     - Beautiful Jekyll: "https://beautifuljekyll.com"
     - Learn markdown: "https://www.markdowntutorial.com/"
