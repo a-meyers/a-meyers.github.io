@@ -66,6 +66,9 @@ h2 {
 h3 {
   font-size: 1.5rem;
 }
+h3.post-subtitle {
+  font-size: 20px; /* Adjust the size as needed */
+}
 h4 {
   font-size: 1.125rem;
 }
@@ -513,7 +516,7 @@ footer .footer-custom-content {
 }
 .post-preview .post-subtitle {
   margin: 0;
-  font-weight: 150;
+  font-weight: 300;
   margin-bottom: 0.625rem;
 }
 .post-preview .post-meta,
