@@ -25,9 +25,9 @@ navbar-links:
   About Me: "aboutme"
   Blog: "posts"
   #Resume: "resume"
-  Resources:
-    - Beautiful Jekyll: "https://beautifuljekyll.com"
-    - Learn markdown: "https://www.markdowntutorial.com/"
+  #Resources:
+  #  - Beautiful Jekyll: "https://beautifuljekyll.com"
+  #  - Learn markdown: "https://www.markdowntutorial.com/"
 
 ################
 # --- Logo --- #
