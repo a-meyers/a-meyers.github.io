@@ -1,4 +1,10 @@
-**Author: Anthony Meyers**
+---
+layout: post
+title: Key AI Technologies for 2025 - Advancements in Autonomous AI Agents
+subtitle: There's lots to learn!
+tags: [AI, agents]
+author: Anthony Meyers
+---
 
 Date: January 05, 2025
 
