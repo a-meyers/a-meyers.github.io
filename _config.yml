@@ -22,7 +22,7 @@ author: Anthony Meyers
 navbar-links:
   Home: "index"
   Networking : "networking"
-  #About Me: "aboutme"
+  About Me: "aboutme"
   Blog: "posts"
   #Resume: "resume"
   Resources:
