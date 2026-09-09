@@ -30,9 +30,12 @@ const COLOR_FIELDS = [
 const turndown = new TurndownService({ headingStyle: 'atx', codeBlockStyle: 'fenced' });
 
 const app = express();
-app.use(express.json({ limit: '5mb' }));
+// Generous limit: the graphics designer posts flattened PNG exports as base64
+// JSON, which runs ~33% larger than the binary image.
+app.use(express.json({ limit: '16mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/vendor/quill', express.static(path.join(__dirname, 'node_modules', 'quill', 'dist')));
+app.use('/vendor/fabric', express.static(path.join(__dirname, 'node_modules', 'fabric', 'dist')));
 app.use('/assets', express.static(path.join(ROOT, 'assets')));
 
 // ---------- helpers ----------
@@ -381,6 +384,50 @@ app.post('/api/images', (req, res, next) => {
       })
     )
     .catch(next);
+});
+
+// List existing images in assets/img, for background/image pickers.
+app.get('/api/images', async (req, res, next) => {
+  try {
+    await fs.mkdir(IMG_DIR, { recursive: true });
+    const names = await fs.readdir(IMG_DIR);
+    const entries = await Promise.all(
+      names
+        .filter((n) => ALLOWED_IMAGE_EXT.has(path.extname(n).toLowerCase()))
+        .map(async (n) => {
+          const stat = await fs.stat(path.join(IMG_DIR, n));
+          return { filename: n, path: `/assets/img/${n}`, mtime: stat.mtimeMs };
+        })
+    );
+    entries.sort((a, b) => b.mtime - a.mtime);
+    res.json(entries.map(({ filename, path: p }) => ({ filename, path: p })));
+  } catch (e) {
+    next(e);
+  }
+});
+
+// Save a flattened graphics-designer canvas export (a data: URL) as a real
+// PNG file in assets/img.
+const DATA_URL_RE = /^data:image\/png;base64,([A-Za-z0-9+/]+={0,2})$/;
+const MAX_CANVAS_IMAGE_BYTES = 10 * 1024 * 1024;
+
+app.post('/api/images/from-data', async (req, res, next) => {
+  try {
+    const { dataUrl, filename } = req.body || {};
+    const match = typeof dataUrl === 'string' && dataUrl.match(DATA_URL_RE);
+    if (!match) throw httpError(400, 'Expected a PNG data URL');
+    const buffer = Buffer.from(match[1], 'base64');
+    if (buffer.length === 0) throw httpError(400, 'Empty image');
+    if (buffer.length > MAX_CANVAS_IMAGE_BYTES) throw httpError(413, 'Image is too large');
+
+    const base = slugify(filename) || 'graphic';
+    const outName = `${Date.now()}-${base}.png`;
+    await fs.mkdir(IMG_DIR, { recursive: true });
+    await fs.writeFile(path.join(IMG_DIR, outName), buffer);
+    res.status(201).json({ path: `/assets/img/${outName}` });
+  } catch (e) {
+    next(e);
+  }
 });
 
 // ---------- error handling ----------

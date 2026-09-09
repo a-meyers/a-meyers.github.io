@@ -1,3 +1,5 @@
+import { openDesigner } from './designer.js';
+
 const content = document.getElementById('content');
 const toastEl = document.getElementById('toast');
 let toastTimer = null;
@@ -76,7 +78,7 @@ function wireImageField(root, inputSelector, uploadBtnSelector, fileInputSelecto
   });
 }
 
-function imageFieldHtml({ id, label, value }) {
+function imageFieldHtml({ id, label, value, designable = false }) {
   return `
     <div class="field">
       <label>${label}</label>
@@ -84,13 +86,30 @@ function imageFieldHtml({ id, label, value }) {
         <input type="text" id="${id}" value="${escapeHtml(value || '')}" placeholder="/assets/img/example.jpg" />
         <button type="button" id="${id}-upload-btn">Upload…</button>
         <input type="file" id="${id}-file" accept="image/*" hidden />
+        ${designable ? `<button type="button" id="${id}-design-btn">Design…</button>` : ''}
       </div>
       <img id="${id}-preview" class="image-preview" alt="" />
     </div>`;
 }
 
-function wireImageFieldById(id) {
+function wireImageFieldById(id, designerOpts) {
   wireImageField(document, `#${id}`, `#${id}-upload-btn`, `#${id}-file`, `#${id}-preview`);
+  if (!designerOpts) return;
+  const input = document.getElementById(id);
+  const preview = document.getElementById(`${id}-preview`);
+  const designBtn = document.getElementById(`${id}-design-btn`);
+  if (!designBtn) return;
+  designBtn.addEventListener('click', async () => {
+    const result = await openDesigner({
+      ...designerOpts,
+      initialImage: input.value || undefined,
+    });
+    if (result && result.path) {
+      input.value = result.path;
+      if (input.value) { preview.src = input.value; preview.classList.add('show'); }
+      toast('Graphic saved');
+    }
+  });
 }
 
 // ---------- Quill helper ----------
@@ -119,6 +138,7 @@ const VIEWS = {
   posts: renderPostsList,
   pages: renderPagesList,
   homepage: renderHomepage,
+  graphics: renderGraphics,
   settings: renderSettings,
 };
 
@@ -202,8 +222,8 @@ async function renderPostEditor(filename) {
       <label>Tags (comma separated)</label>
       <input type="text" id="p-tags" value="${escapeHtml((d.tags || []).join(', '))}" />
     </div>
-    ${imageFieldHtml({ id: 'p-cover', label: 'Cover image', value: d['cover-img'] })}
-    ${imageFieldHtml({ id: 'p-thumb', label: 'Thumbnail image (optional, feed list only)', value: d['thumbnail-img'] })}
+    ${imageFieldHtml({ id: 'p-cover', label: 'Cover image', value: d['cover-img'], designable: true })}
+    ${imageFieldHtml({ id: 'p-thumb', label: 'Thumbnail image (optional, feed list only)', value: d['thumbnail-img'], designable: true })}
     <div class="checkbox-field">
       <input type="checkbox" id="p-comments" ${d.comments === false ? '' : 'checked'} />
       <label for="p-comments">Allow comments on this post</label>
@@ -220,8 +240,8 @@ async function renderPostEditor(filename) {
   `;
 
   document.getElementById('back-link').addEventListener('click', renderPostsList);
-  wireImageFieldById('p-cover');
-  wireImageFieldById('p-thumb');
+  wireImageFieldById('p-cover', { presetKey: 'postCover', title: 'Design post cover image', suggestedName: 'post-cover' });
+  wireImageFieldById('p-thumb', { presetKey: 'thumbnail', title: 'Design post thumbnail', suggestedName: 'post-thumbnail' });
   const quill = makeEditor('#p-editor', post.bodyHtml);
 
   document.getElementById('save-btn').addEventListener('click', async () => {
@@ -309,7 +329,7 @@ async function renderPageEditor(id) {
       <label>Subtitle</label>
       <input type="text" id="pg-subtitle" value="${escapeHtml(d.subtitle)}" />
     </div>
-    ${imageFieldHtml({ id: 'pg-bigimg', label: 'Cover image (optional)', value: d.bigimg })}
+    ${imageFieldHtml({ id: 'pg-bigimg', label: 'Cover image (optional)', value: d.bigimg, designable: true })}
     <div class="field">
       <label>Content</label>
       <div class="editor-wrap"><div id="pg-editor" class="editor-body"></div></div>
@@ -321,7 +341,7 @@ async function renderPageEditor(id) {
   `;
 
   document.getElementById('back-link').addEventListener('click', renderPagesList);
-  wireImageFieldById('pg-bigimg');
+  wireImageFieldById('pg-bigimg', { presetKey: 'pageCover', title: `Design cover image for ${page.label}`, suggestedName: `${id}-cover` });
   const quill = makeEditor('#pg-editor', page.bodyHtml);
 
   document.getElementById('save-btn').addEventListener('click', async () => {
@@ -381,6 +401,49 @@ async function renderHomepage() {
       toast(e.message, true);
     }
   });
+}
+
+// ---------- Graphics designer (standalone) ----------
+
+async function renderGraphics() {
+  content.innerHTML = `
+    <div class="toolbar">
+      <h2>Graphics Designer</h2>
+      <button class="primary" id="new-graphic-btn">+ New Graphic</button>
+    </div>
+    <p class="muted">Design backgrounds, shapes, and banners here, then paste the saved image path into any Cover image / Thumbnail / Avatar field — or open the designer directly from one of those fields to save straight into it.</p>
+    <div id="graphics-grid" class="gallery-grid"></div>
+  `;
+  document.getElementById('new-graphic-btn').addEventListener('click', async () => {
+    const result = await openDesigner({ presetKey: 'postCover', title: 'New Graphic', suggestedName: 'graphic' });
+    if (result && result.path) {
+      toast('Graphic saved to assets/img');
+      loadGallery();
+    }
+  });
+  loadGallery();
+}
+
+async function loadGallery() {
+  const grid = document.getElementById('graphics-grid');
+  if (!grid) return;
+  try {
+    const images = await api('GET', '/api/images');
+    if (!images.length) {
+      grid.innerHTML = `<div class="empty-state">No graphics yet. Click "New Graphic" to design your first one.</div>`;
+      return;
+    }
+    grid.innerHTML = images.map(({ path }) => `
+      <div class="gallery-item">
+        <img src="${escapeHtml(path)}" alt="" />
+        <input type="text" class="gallery-path" readonly value="${escapeHtml(path)}" />
+      </div>`).join('');
+    grid.querySelectorAll('.gallery-path').forEach((input) => {
+      input.addEventListener('click', () => input.select());
+    });
+  } catch (e) {
+    toast(e.message, true);
+  }
 }
 
 // ---------- Settings ----------
@@ -462,7 +525,7 @@ async function renderSettings() {
         <div class="field"><label>Site title</label><input type="text" id="s-title" value="${escapeHtml(s.title)}" /></div>
         <div class="field"><label>Author</label><input type="text" id="s-author" value="${escapeHtml(s.author)}" /></div>
       </div>
-      ${imageFieldHtml({ id: 's-avatar', label: 'Avatar image', value: s.avatar })}
+      ${imageFieldHtml({ id: 's-avatar', label: 'Avatar image', value: s.avatar, designable: true })}
       <div class="checkbox-field">
         <input type="checkbox" id="s-round-avatar" ${s['round-avatar'] ? 'checked' : ''} />
         <label for="s-round-avatar">Round avatar</label>
@@ -501,7 +564,7 @@ async function renderSettings() {
     </div>
   `;
 
-  wireImageFieldById('s-avatar');
+  wireImageFieldById('s-avatar', { presetKey: 'avatar', title: 'Design site avatar', suggestedName: 'avatar' });
   wireKvEditor('navbar-kv', 'navbar-add', { keyPlaceholder: 'Label', valuePlaceholder: 'Target (e.g. aboutme)' });
   wireKvEditor('social-kv', 'social-add', { keyPlaceholder: 'Network', valuePlaceholder: 'Username / value', keyIsSelect: true });
 
