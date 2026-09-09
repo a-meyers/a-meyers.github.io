@@ -16,6 +16,7 @@
         <li data-view="posts" class="active">Blog Posts</li>
         <li data-view="pages">Static Pages</li>
         <li data-view="homepage">Homepage Intro</li>
+        <li data-view="graphics">Graphics Designer</li>
         <li data-view="settings">Site Design &amp; Settings</li>
       </ul>
     </nav>
@@ -26,7 +27,84 @@
 
   <div id="toast" class="toast" hidden></div>
 
+  <div id="designer-overlay" class="designer-overlay" hidden>
+    <div class="designer-modal">
+      <div class="designer-header">
+        <h3 id="designer-title">Graphics Designer</h3>
+        <div class="designer-header-actions">
+          <input type="text" id="dz-filename" placeholder="filename" />
+          <button id="dz-cancel">Cancel</button>
+          <button class="primary" id="dz-save">Save &amp; Use</button>
+        </div>
+      </div>
+      <div class="designer-body">
+        <div class="designer-toolbar">
+          <div class="dz-group">
+            <label>Canvas size</label>
+            <select id="dz-preset"></select>
+            <div id="dz-custom-size" class="dz-custom-size" hidden>
+              <input type="number" id="dz-width" min="100" max="3000" />
+              <span>×</span>
+              <input type="number" id="dz-height" min="100" max="3000" />
+              <button id="dz-apply-size">Apply</button>
+            </div>
+          </div>
+          <div class="dz-group">
+            <label>Background</label>
+            <div class="dz-row">
+              <input type="color" id="dz-bg-color" value="#ffffff" />
+              <button id="dz-bg-image-btn">Image…</button>
+              <button id="dz-bg-clear">Clear image</button>
+            </div>
+            <label class="dz-inline">Dark overlay <input type="range" id="dz-overlay" min="0" max="90" value="0" /></label>
+          </div>
+          <div class="dz-group">
+            <label>Add to canvas</label>
+            <div class="dz-row wrap">
+              <button id="dz-add-rect">▭ Rectangle</button>
+              <button id="dz-add-circle">◯ Circle</button>
+              <button id="dz-add-triangle">△ Triangle</button>
+              <button id="dz-add-line">— Line</button>
+              <button id="dz-add-text">Text</button>
+              <button id="dz-add-image">Image</button>
+            </div>
+          </div>
+          <div class="dz-group" id="dz-object-props" hidden>
+            <label>Selected object</label>
+            <div class="dz-row">
+              <input type="color" id="dz-obj-fill" />
+              <label class="dz-inline">Opacity <input type="range" id="dz-obj-opacity" min="0" max="100" value="100" /></label>
+            </div>
+            <input type="text" id="dz-obj-text" placeholder="Text content" hidden />
+            <div class="dz-row">
+              <button id="dz-obj-forward">Bring forward</button>
+              <button id="dz-obj-backward">Send back</button>
+              <button class="danger" id="dz-obj-delete">Delete</button>
+            </div>
+          </div>
+        </div>
+        <div class="designer-canvas-wrap">
+          <canvas id="dz-canvas"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="dz-picker-overlay" class="designer-overlay" hidden>
+    <div class="designer-modal dz-picker-modal">
+      <div class="designer-header">
+        <h3>Choose an image</h3>
+        <div class="designer-header-actions">
+          <button id="dz-picker-upload-btn">Upload new…</button>
+          <input type="file" id="dz-picker-file" accept="image/*" hidden />
+          <button id="dz-picker-cancel">Cancel</button>
+        </div>
+      </div>
+      <div class="dz-picker-grid" id="dz-picker-grid"></div>
+    </div>
+  </div>
+
   <script src="/vendor/quill/quill.js"></script>
-  <script src="/app.js"></script>
+  <script type="module" src="/app.js"></script>
 </body>
 </html>
