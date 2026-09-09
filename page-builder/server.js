@@ -15,9 +15,10 @@ const CONFIG_PATH = path.join(ROOT, '_config.yml');
 const INDEX_PATH = path.join(ROOT, 'index.html');
 
 const PAGES = [
-  { id: 'aboutme', file: 'aboutme.md', label: 'About Me' },
-  { id: 'networking', file: 'networking.md', label: 'Networking' },
-  { id: 'resume', file: 'resume.md', label: 'Resume' },
+  { id: 'aboutme', file: 'aboutme.md', label: 'About Me', kind: 'page' },
+  { id: 'networking', file: 'networking.md', label: 'Networking', kind: 'page' },
+  { id: 'resume', file: 'resume.md', label: 'Resume', kind: 'page' },
+  { id: 'portfolio', file: 'portfolio.md', label: 'Portfolio', kind: 'portfolio' },
 ];
 
 const CONFIG_FIELDS = ['title', 'author', 'avatar', 'gtag', 'rss-description'];
@@ -186,17 +187,23 @@ function pageById(id) {
 }
 
 app.get('/api/pages', (req, res) => {
-  res.json(PAGES.map(({ id, label, file }) => ({ id, label, file })));
+  res.json(PAGES.map(({ id, label, file, kind }) => ({ id, label, file, kind })));
 });
 
 app.get('/api/pages/:id', async (req, res, next) => {
   try {
     const p = pageById(req.params.id);
-    const raw = await fs.readFile(path.join(ROOT, p.file), 'utf8');
+    const full = path.join(ROOT, p.file);
+    if (!fssync.existsSync(full)) {
+      res.json({ id: p.id, label: p.label, kind: p.kind, data: {}, bodyHtml: '' });
+      return;
+    }
+    const raw = await fs.readFile(full, 'utf8');
     const parsed = matter(raw);
     res.json({
       id: p.id,
       label: p.label,
+      kind: p.kind,
       data: parsed.data,
       bodyHtml: marked.parse(parsed.content || ''),
     });
@@ -205,26 +212,50 @@ app.get('/api/pages/:id', async (req, res, next) => {
   }
 });
 
+function isSafeUrl(u) {
+  const m = String(u).match(/^([a-z][a-z0-9+.-]*):/i);
+  if (!m) return true; // relative path, anchor, etc.
+  return ['http', 'https', 'mailto'].includes(m[1].toLowerCase());
+}
+
+function sanitizePortfolioItems(items) {
+  if (!Array.isArray(items)) return [];
+  return items
+    .map((it) => ({
+      title: String((it && it.title) || '').trim(),
+      image: String((it && it.image) || '').trim(),
+      url: String((it && it.url) || '').trim(),
+      description: String((it && it.description) || '').trim(),
+    }))
+    .filter((it) => it.title || it.image || it.description)
+    .map((it) => (it.url && !isSafeUrl(it.url) ? { ...it, url: '' } : it));
+}
+
 app.put('/api/pages/:id', async (req, res, next) => {
   try {
     const p = pageById(req.params.id);
     const full = path.join(ROOT, p.file);
-    const raw = await fs.readFile(full, 'utf8');
-    const existing = matter(raw).data || {};
-    const { title, subtitle, bigimg, bodyHtml } = req.body || {};
+    const existing = fssync.existsSync(full) ? matter(await fs.readFile(full, 'utf8')).data || {} : {};
+    const { title, subtitle, coverImg, items, bodyHtml } = req.body || {};
 
-    const data = { ...existing };
+    const data = { ...existing, layout: p.kind === 'portfolio' ? 'portfolio' : existing.layout || 'page' };
     if (title !== undefined) data.title = title;
     if (subtitle !== undefined) {
       if (subtitle) data.subtitle = subtitle;
       else delete data.subtitle;
     }
-    if (bigimg !== undefined) {
-      if (bigimg) data.bigimg = bigimg;
-      else delete data.bigimg;
+    if (coverImg !== undefined) {
+      if (coverImg) data['cover-img'] = coverImg;
+      else delete data['cover-img'];
+    }
+    if (p.kind === 'portfolio' && items !== undefined) {
+      const clean = sanitizePortfolioItems(items);
+      if (clean.length) data.items = clean;
+      else delete data.items;
     }
 
     const out = matter.stringify(htmlToMarkdown(bodyHtml), data);
+    await fs.mkdir(path.dirname(full), { recursive: true });
     await fs.writeFile(full, out, 'utf8');
     res.json({ id: p.id });
   } catch (e) {

@@ -23,6 +23,7 @@ navbar-links:
   Home: "index"
   Networking : "networking"
   About Me: "aboutme"
+  Portfolio: "portfolio"
   Blog: "posts"
   #Resume: "resume"
   #Resources:

@@ -68,7 +68,7 @@ function wireImageField(root, inputSelector, uploadBtnSelector, fileInputSelecto
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Upload failed');
       input.value = data.path;
-      updatePreview();
+      input.dispatchEvent(new Event('input', { bubbles: true }));
       toast('Image uploaded');
     } catch (e) {
       toast(e.message, true);
@@ -96,7 +96,6 @@ function wireImageFieldById(id, designerOpts) {
   wireImageField(document, `#${id}`, `#${id}-upload-btn`, `#${id}-file`, `#${id}-preview`);
   if (!designerOpts) return;
   const input = document.getElementById(id);
-  const preview = document.getElementById(`${id}-preview`);
   const designBtn = document.getElementById(`${id}-design-btn`);
   if (!designBtn) return;
   designBtn.addEventListener('click', async () => {
@@ -106,7 +105,7 @@ function wireImageFieldById(id, designerOpts) {
     });
     if (result && result.path) {
       input.value = result.path;
-      if (input.value) { preview.src = input.value; preview.classList.add('show'); }
+      input.dispatchEvent(new Event('input', { bubbles: true }));
       toast('Graphic saved');
     }
   });
@@ -317,6 +316,7 @@ async function renderPageEditor(id) {
     return renderPagesList();
   }
   const d = page.data || {};
+  const isPortfolio = page.kind === 'portfolio';
 
   content.innerHTML = `
     <span class="back-link" id="back-link">&larr; Back to pages</span>
@@ -329,11 +329,18 @@ async function renderPageEditor(id) {
       <label>Subtitle</label>
       <input type="text" id="pg-subtitle" value="${escapeHtml(d.subtitle)}" />
     </div>
-    ${imageFieldHtml({ id: 'pg-bigimg', label: 'Cover image (optional)', value: d.bigimg, designable: true })}
+    ${imageFieldHtml({ id: 'pg-cover', label: 'Cover image (optional)', value: d['cover-img'], designable: true })}
     <div class="field">
-      <label>Content</label>
+      <label>${isPortfolio ? 'Intro text (optional, shown above the grid)' : 'Content'}</label>
       <div class="editor-wrap"><div id="pg-editor" class="editor-body"></div></div>
     </div>
+    ${isPortfolio ? `
+      <div class="field">
+        <label>Portfolio items</label>
+        <div id="pg-items"></div>
+        <button type="button" id="pg-item-add">+ Add item</button>
+      </div>
+    ` : ''}
     <div class="form-actions">
       <div class="spacer"></div>
       <button class="primary" id="save-btn">Save Changes</button>
@@ -341,16 +348,76 @@ async function renderPageEditor(id) {
   `;
 
   document.getElementById('back-link').addEventListener('click', renderPagesList);
-  wireImageFieldById('pg-bigimg', { presetKey: 'pageCover', title: `Design cover image for ${page.label}`, suggestedName: `${id}-cover` });
+  wireImageFieldById('pg-cover', { presetKey: 'pageCover', title: `Design cover image for ${page.label}`, suggestedName: `${id}-cover` });
   const quill = makeEditor('#pg-editor', page.bodyHtml);
+
+  let items = isPortfolio ? (Array.isArray(d.items) ? d.items.map((it) => ({ ...it })) : []) : [];
+  if (isPortfolio) renderPortfolioItems();
+
+  function renderPortfolioItems() {
+    const container = document.getElementById('pg-items');
+    if (!items.length) {
+      container.innerHTML = `<div class="empty-state">No items yet. Click "Add item" to add your first project.</div>`;
+      return;
+    }
+    container.innerHTML = items.map((it, idx) => `
+      <div class="portfolio-item-editor" data-idx="${idx}">
+        <div class="portfolio-item-editor-header">
+          <strong>Item ${idx + 1}</strong>
+          <div class="dz-row">
+            <button type="button" class="pi-up" ${idx === 0 ? 'disabled' : ''}>↑</button>
+            <button type="button" class="pi-down" ${idx === items.length - 1 ? 'disabled' : ''}>↓</button>
+            <button type="button" class="pi-remove danger">Remove</button>
+          </div>
+        </div>
+        ${imageFieldHtml({ id: `pi-${idx}-image`, label: 'Image', value: it.image, designable: true })}
+        <div class="field-row">
+          <div class="field"><label>Title</label><input type="text" class="pi-title" value="${escapeHtml(it.title)}" /></div>
+          <div class="field"><label>Link (optional)</label><input type="text" class="pi-url" value="${escapeHtml(it.url)}" placeholder="https://…" /></div>
+        </div>
+        <div class="field"><label>Description (optional)</label><textarea class="pi-desc" rows="2">${escapeHtml(it.description)}</textarea></div>
+      </div>
+    `).join('');
+
+    items.forEach((it, idx) => {
+      wireImageFieldById(`pi-${idx}-image`, { presetKey: 'thumbnail', title: `Design image for item ${idx + 1}`, suggestedName: `portfolio-item-${idx + 1}` });
+    });
+
+    container.querySelectorAll('.portfolio-item-editor').forEach((row) => {
+      const idx = Number(row.dataset.idx);
+      row.querySelector('.pi-title').addEventListener('input', (e) => { items[idx].title = e.target.value; });
+      row.querySelector('.pi-url').addEventListener('input', (e) => { items[idx].url = e.target.value; });
+      row.querySelector('.pi-desc').addEventListener('input', (e) => { items[idx].description = e.target.value; });
+      document.getElementById(`pi-${idx}-image`).addEventListener('input', (e) => { items[idx].image = e.target.value; });
+      row.querySelector('.pi-remove').addEventListener('click', () => { items.splice(idx, 1); renderPortfolioItems(); });
+      row.querySelector('.pi-up').addEventListener('click', () => {
+        if (idx === 0) return;
+        [items[idx - 1], items[idx]] = [items[idx], items[idx - 1]];
+        renderPortfolioItems();
+      });
+      row.querySelector('.pi-down').addEventListener('click', () => {
+        if (idx === items.length - 1) return;
+        [items[idx + 1], items[idx]] = [items[idx], items[idx + 1]];
+        renderPortfolioItems();
+      });
+    });
+  }
+
+  if (isPortfolio) {
+    document.getElementById('pg-item-add').addEventListener('click', () => {
+      items.push({ title: '', image: '', url: '', description: '' });
+      renderPortfolioItems();
+    });
+  }
 
   document.getElementById('save-btn').addEventListener('click', async () => {
     try {
       await api('PUT', `/api/pages/${encodeURIComponent(id)}`, {
         title: document.getElementById('pg-title').value.trim(),
         subtitle: document.getElementById('pg-subtitle').value.trim(),
-        bigimg: document.getElementById('pg-bigimg').value.trim(),
+        coverImg: document.getElementById('pg-cover').value.trim(),
         bodyHtml: quill.root.innerHTML,
+        items: isPortfolio ? items : undefined,
       });
       toast('Page saved');
     } catch (e) {

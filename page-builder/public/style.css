@@ -272,6 +272,26 @@ button:disabled {
 
 .kv-row button { padding: 6px 10px; }
 
+.portfolio-item-editor {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  background: var(--panel);
+}
+
+.portfolio-item-editor-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.portfolio-item-editor-header .dz-row button {
+  padding: 5px 9px;
+  font-size: 13px;
+}
+
 .empty-state {
   color: var(--muted);
   padding: 30px;
