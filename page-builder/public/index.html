@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Site Page Builder</title>
+  <link rel="stylesheet" href="/vendor/quill/quill.snow.css" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="app">
+    <nav class="sidebar">
+      <h1>Page Builder</h1>
+      <p class="site-name">a-meyers.github.io</p>
+      <ul class="nav-list" id="nav-list">
+        <li data-view="posts" class="active">Blog Posts</li>
+        <li data-view="pages">Static Pages</li>
+        <li data-view="homepage">Homepage Intro</li>
+        <li data-view="settings">Site Design &amp; Settings</li>
+      </ul>
+    </nav>
+    <main class="content" id="content">
+      <!-- views are rendered here by app.js -->
+    </main>
+  </div>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="/vendor/quill/quill.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>
